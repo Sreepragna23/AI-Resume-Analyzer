@@ -6,7 +6,7 @@ from io import BytesIO
 import re
 from google import genai
 client = genai.Client(
-    api_key="AQ.Ab8RN6INk7v8QR8yLC8VVXfUEeKJ6phKjOtlWCs7IFNM22Q-Cw"
+     api_key=st.secrets["GEMINI_API_KEY"]
 )
 st.set_page_config(
     page_title="AI Resume Analyzer",
