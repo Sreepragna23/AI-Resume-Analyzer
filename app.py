@@ -3,6 +3,11 @@ import pdfplumber
 import matplotlib.pyplot as plt
 from reportlab.pdfgen import canvas
 from io import BytesIO
+import re
+from google import genai
+client = genai.Client(
+    api_key="AQ.Ab8RN6INk7v8QR8yLC8VVXfUEeKJ6phKjOtlWCs7IFNM22Q-Cw"
+)
 st.set_page_config(
     page_title="AI Resume Analyzer",
     page_icon="🤖",
@@ -39,7 +44,7 @@ if uploaded_file is not None:
     skills_list = [
         "python",
         "java",
-        "c",
+        "c programming",
         "c++",
         "sql",
         "html",
@@ -81,16 +86,17 @@ if uploaded_file is not None:
     found_skills = []
 
     for skill in skills_list:
-        if skill.lower() in text.lower():
+        pattern = r'(?<!\w)' + re.escape(skill.lower()) + r'(?!\w)'
+        if re.search(pattern, text.lower()):
             found_skills.append(skill)
 
     # JD Skills
     jd_skills = []
 
     for skill in skills_list:
-        if skill.lower() in job_description.lower():
+        pattern = r'(?<!\w)' + re.escape(skill.lower()) + r'(?!\w)'
+        if re.search(pattern, job_description.lower()):
             jd_skills.append(skill)
-
     # Display Skills
     col1, col2 = st.columns(2)
 
@@ -324,6 +330,57 @@ if uploaded_file is not None:
             st.success(role)
 
         st.divider()
+        st.subheader("🧠 AI Resume Summary")
+        prompt = f"""
+        Analyze this resume.
+
+        Resume:
+        {text}
+
+        Job Description:
+        {job_description}
+
+        Provide:
+        1. Resume Summary
+        2. Strengths
+        3. Weaknesses
+        4. Improvement Suggestions
+        """
+
+        with st.spinner("🧠 Generating AI Resume Summary..."):
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt
+        )
+
+        st.success(response.text)
+        st.subheader("🎤 AI Interview Questions")
+
+        question_prompt = f"""
+        Based on this resume and job description,
+        generate 10 interview questions.
+
+        Resume:
+        {text}
+
+        Job Description:
+        {job_description}
+
+        Questions should cover:
+        - Technical Skills
+        - Projects
+        - Problem Solving
+        - HR Questions
+        """
+
+        with st.spinner("🎤 Generating Interview Questions..."):
+            questions_response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=question_prompt
+                )
+
+        st.write(questions_response.text)
+
 
         st.download_button(
             label="📄 Download ATS Report",
