@@ -2,4 +2,4 @@ streamlit
 pdfplumber
 matplotlib
 reportlab
-google-generativeai
+google-genai
