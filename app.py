@@ -13,10 +13,44 @@ st.set_page_config(
     page_icon="🤖",
     layout="wide"
 )
+st.markdown("""
+<style>
+.big-title {
+    text-align: center;
+    font-size: 45px;
+    font-weight: bold;
+    background: linear-gradient(90deg,#00DBDE,#FC00FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-st.title("🤖 AI Resume Analyzer")
-st.caption("Analyze Resume | ATS Score | Missing Skills | Career Suggestions")
+.subtitle {
+    text-align: center;
+    color: gray;
+}
+</style>
+""", unsafe_allow_html=True)
 
+st.markdown(
+    '<p class="big-title">🤖 AI Resume Analyzer</p>',
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    '<p class="subtitle">ATS Score | AI Feedback | Interview Questions</p>',
+    unsafe_allow_html=True
+)
+with st.sidebar:
+
+    st.title("🚀 AI Resume Analyzer")
+
+    st.success("ATS Score")
+
+    st.success("AI Resume Summary")
+
+    st.success("Interview Questions")
+
+    st.success("PDF Report")
 job_description = st.text_area(
     "Paste Job Description Here"
 )
@@ -140,7 +174,17 @@ if uploaded_file is not None:
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            st.metric("ATS Score", f"{score:.0f}%")
+            st.markdown(f"""
+            <div style="
+            padding:20px;
+            border-radius:15px;
+            background:linear-gradient(135deg,#00c6ff,#0072ff);
+            color:white;
+            text-align:center;">
+            <h3>ATS Score</h3>
+            <h1>{score:.0f}%</h1>
+            </div>
+            """, unsafe_allow_html=True)
 
         with col2:
             st.metric("Matched Skills", len(matched_skills))
@@ -351,9 +395,12 @@ if uploaded_file is not None:
             response = client.models.generate_content(
                 model="gemini-2.5-flash",
                 contents=prompt
-        )
+                )
 
-        st.success(response.text)
+        with st.expander("📄 View AI Resume Summary", expanded=False):
+            st.write(response.text)
+
+
         st.subheader("🎤 AI Interview Questions")
         if st.button("Generate Interview Questions"):
             question_prompt = f"""
@@ -364,7 +411,7 @@ if uploaded_file is not None:
 
             Job Description:
             {job_description}
-
+ 
             Questions should cover:
             - Technical Skills
             - Projects
@@ -379,12 +426,13 @@ if uploaded_file is not None:
                         contents=question_prompt
                         )
 
-                st.write(questions_response.text)
+                with st.expander("🎤 View Interview Questions", expanded=True):
+                    st.write(questions_response.text)
 
             except Exception:
                 st.warning(
-                    "⚠️ Gemini servers are busy. Please try again after a few minutes."
-                    )
+                "⚠️ Gemini servers are busy. Please try again after a few minutes."
+                )
 
 
         st.download_button(
