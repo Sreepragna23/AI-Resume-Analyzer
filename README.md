@@ -26,6 +26,7 @@ https://your-app-name.streamlit.app
 * ⚠️ Weakness Detection
 * 🤖 Recommended Job Roles
 * 🧠 AI Resume Summary using Gemini AI
+* 🎤 AI Interview Questions Generator
 * 📄 Download ATS Report as PDF
 
 ## 🛠️ Technologies Used
@@ -145,6 +146,7 @@ streamlit run app.py
 * Career Roadmap
 * AI Resume Summary
 * Recommended Roles
+* AI Interview Questions
 * PDF Report Generation
 
 ## 👩‍💻 Author
