@@ -355,31 +355,36 @@ if uploaded_file is not None:
 
         st.success(response.text)
         st.subheader("🎤 AI Interview Questions")
+        if st.button("Generate Interview Questions"):
+            question_prompt = f"""
+            Based on this resume and job description,
+            generate 10 interview questions.
+            Resume:
+            {text}
 
-        question_prompt = f"""
-        Based on this resume and job description,
-        generate 10 interview questions.
+            Job Description:
+            {job_description}
 
-        Resume:
-        {text}
+            Questions should cover:
+            - Technical Skills
+            - Projects
+            - Problem Solving
+            - HR Questions
+            """
 
-        Job Description:
-        {job_description}
+            try:
+                with st.spinner("🎤 Generating Interview Questions..."):
+                    questions_response = client.models.generate_content(
+                        model="gemini-2.5-flash",
+                        contents=question_prompt
+                        )
 
-        Questions should cover:
-        - Technical Skills
-        - Projects
-        - Problem Solving
-        - HR Questions
-        """
+                st.write(questions_response.text)
 
-        with st.spinner("🎤 Generating Interview Questions..."):
-            questions_response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=question_prompt
-                )
-
-        st.write(questions_response.text)
+            except Exception:
+                st.warning(
+                    "⚠️ Gemini servers are busy. Please try again after a few minutes."
+                    )
 
 
         st.download_button(
